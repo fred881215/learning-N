@@ -69,5 +69,6 @@ func1 called
 ...驗證許可權...
 func2 called
 ```
+
 - 可以看到，當我們執行func1函式時，不會直接印出called，而是會跳到前面呼叫＠裝飾器連接的wrapper，並將裝飾器下方的func1丟入wrapper。
 - 運行步驟為：先進行wrapper底下access內的print('...驗證許可權...')，並在驗證完許可權後呼叫傳進來的引數func，接上print('func1 called')，隨後回到原點接著執行下一個裝飾器。
