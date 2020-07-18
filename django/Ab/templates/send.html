@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>發送驗證碼</title>
+    </head>
+    <body>
+        {% if errors %}
+            <li>
+                {% for error in errors %}
+                    <p style="color: red;">
+                        {{error}}
+                    </p>
+                {% endfor %}
+            </li>
+        {% endif %}
+        <h1>請填入信箱和手機</h1>
+        <form action="" method="post">{% csrf_token %}
+            <label for="email">email:</label>
+            <input type="email" name="email" value="" id="email"> <br/>
+            <label for="phone">phone:</label>
+            <input type="text" name="phone" value="" id="phone"> <br/>
+            <input type="submit" value="發送"/>
+        </form>
+    </body>
+</html>
