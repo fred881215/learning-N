@@ -1,9 +1,10 @@
 from django.shortcuts import render
-from django.shortcuts import HttpResponse,HttpResponseRedirect,JsonResponse
+from django.http import HttpResponse,JsonResponse
 from django.contrib import auth
 from .models import *
-from login.models import *
+from api.models import *
 from datetime import date,datetime
+from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
 
@@ -61,11 +62,9 @@ def friend_send(request): # 送出控糖團邀請
     else:
         if Friend_data.objects.get(uid=uid, relation_id=friend_uid, status=1):
             output = {"status":"1"} # 2: 已經成為好友
-        else
-            Friend_data.objects.create(uid=uid, relation_id=friend_uid, type=friend_type, /
-            read=False, created_at=nowtime, updated_at=nowtime)
-            Friend_data.objects.create(uid=friend_uid, relation_id=uid, type=friend_type, /
-            read=False, created_at=nowtime, updated_at=nowtime)
+        else:
+            Friend_data.objects.create(uid=uid, relation_id=friend_uid, type=friend_type, read=False, updated_at=nowtime)
+            Friend_data.objects.create(uid=friend_uid, relation_id=uid, type=friend_type, read=False, updated_at=nowtime)
             output = {"status":"0"}
     return JsonResponse(output,safe=False)
 
@@ -136,33 +135,6 @@ def friend_results(request): # 控糖團結果
     else:
         output = {"status":"0", "requests_list":requests_list, "relation":relation}
     return render(request, 'friend/friend_list.html', output)
-# ---
-@csrf_exempt
-def care_catch(request): # 獲取關懷諮詢
-    uid = request.user.uid
-    try:
-        UserCare = UserCare.objects.filter(member_id=0).latest('updated_at')
-    except:
-        output = {"status":"1"}
-        return JsonResponse(output,safe=False)
-    else:
-        output = {"status":"0", "UserCare":UserCare}
-    return render(request, 'friend/friend_list.html', output)
-
-@csrf_exempt
-def care_send(request): # 發送關懷諮詢
-    uid = request.user.uid
-    message = request.POST.get('message')
-    nowtime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    date = datetime.now().strftime('%Y%m%d')
-    try:
-        UserCare.objects.create(uid=uid, member_id=0, reply_id=NULL, /
-            message=message, created_at=nowtime, updated_at=nowtime, date=date)
-    except:
-        output = {"status":"1"}
-    else:
-        output = {"status":"0"}
-    return JsonResponse(output,safe=False)
 
 @csrf_exempt
 def notification(request): # 親友團通知
@@ -173,8 +145,7 @@ def notification(request): # 親友團通知
         user = Friend_data.objects.get(uid=uid, type=1, status=1)
         friend_uid_list = user.relation_id
         for friend_uid in friend_uid_list:
-            Notification.objects.create(uid=uid, member_id=1, reply_id=friend_uid, /
-                message=message, created_at=nowtime, updated_at=nowtime)
+            Notification.objects.create(uid=uid, member_id=1, reply_id=friend_uid, message=message, updated_at=nowtime)
     except:
         output = {"status":"1"}
     else:

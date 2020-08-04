@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>上傳血壓測量結果</title>
+    </head>
+    <body>
+        <h1>血壓測量結果</h1>
+        <form action="" method="post">{% csrf_token %}
+            <label for="systolic">收縮壓:</label>
+            <input type="text" name="systolic" value="" id="systolic"> <br/>
+            <label for="diastolic">舒張壓:</label>
+            <input type="text" name="diastolic" value="" id="diastolic"> <br/>
+            <label for="pulse">心跳:</label>
+            <input type="text" name="pulse" value="" id="pulse"> <br/>
+            <input type="submit" value="上傳">
+        </form>
+    </body>
+</html>

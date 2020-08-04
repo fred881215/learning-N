@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>上傳體重測量結果</title>
+    </head>
+    <body>
+        <h1>體重測量結果</h1>
+        <form action="" method="post">{% csrf_token %}
+            <label for="weight">體重:</label>
+            <input type="text" name="weight" value="" id="weight"> <br/>
+            <label for="body_fat">體脂:</label>
+            <input type="text" name="body_fat" value="" id="body_fat"> <br/>
+            <label for="bmi">BMI:</label>
+            <input type="text" name="bmi" value="" id="bmi"> <br/>
+            <input type="submit" value="上傳">
+        </form>
+    </body>
+</html>

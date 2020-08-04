@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    {% extends "base.html" %}
+    {% block title %} friend requests{% endblock %}
+    {% block content %}
+    <h1>"status" : "{{status}}" </h1>
+    <h1>"requests" </h1>
+    {% for requests in requests_list %}
+      <ul>
+        <li>"uid" : "{{ requests.uid}}"</li>
+        <li>"relation_id" : "{{ requests.relation_id}}"</li>
+        <li>"type" : "{{ requests.type}}"</li>
+        <li>"status" : "{{ requests.status}}"</li>
+        <li>"read" : "{{ requests.read}}"</li>
+        <li>"created_at" : "{{ requests.created_at}}"</li>
+        <li>"updated_at" : "{{ requests.updated_at}}"</li>
+        <li>"user" : "{{ requests.relation}}"</li>
+      </ul>
+    {% endfor %}
+    {% endblock %}
+
+  </body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>上傳血糖測量結果</title>
+    </head>
+    <body>
+        <h1>血糖測量結果</h1>
+        <form action="" method="post">{% csrf_token %}
+            <label for="sugar">血糖:</label>
+            <input type="text" name="sugar" value="" id="sugar"> <br/>
+            <label for="timeperiod">晨起:</label>
+            <input type="text" name="timeperiod" value="" id="timeperiod"> <br/>
+            <label for="timeperiod">早餐前:</label>
+            <input type="text" name="timeperiod" value="" id="timeperiod"> <br/>
+            <label for="timeperiod">早餐後:</label>
+            <input type="text" name="timeperiod" value="" id="timeperiod"> <br/>
+            <label for="timeperiod">午餐前:</label>
+            <input type="text" name="timeperiod" value="" id="timeperiod"> <br/>
+            <label for="timeperiod">午餐後:</label>
+            <input type="text" name="timeperiod" value="" id="timeperiod"> <br/>
+            <label for="timeperiod">晚餐前:</label>
+            <input type="text" name="timeperiod" value="" id="timeperiod"> <br/>
+            <label for="timeperiod">晚餐後:</label>
+            <input type="text" name="timeperiod" value="" id="timeperiod"> <br/>
+            <label for="timeperiod">睡前:</label>
+            <input type="text" name="timeperiod" value="" id="timeperiod"> <br/>
+            <input type="submit" value="上傳">
+        </form>
+    </body>
+</html>
