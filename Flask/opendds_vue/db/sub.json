@@ -1,0 +1,1 @@
+{"rtps": "jjj.ini", "type": "sub", "topic": {"eth0IP": "192.168.0.149", "eth0NetMask": "255.255.255.0", "eth0gateway": "192.168.0.1", "eth0dns": "8.8.8.8"}}

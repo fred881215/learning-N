@@ -1,0 +1,6 @@
+
+auto wlp3s0
+iface wlp3s0 inet dhcp
+ 
+ 
+ 
