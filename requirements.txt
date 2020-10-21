@@ -26,6 +26,7 @@ dlib==19.20.0
 entrypoints==0.3
 filelock==3.0.12
 Flask==1.1.1
+Flask-Cors==3.0.8
 Flask-MQTT==1.0.7
 gast==0.3.3
 google-auth==1.17.2
@@ -77,6 +78,7 @@ parsel==1.6.0
 parso==0.7.0
 pexpect==4.8.0
 pickleshare==0.7.5
+Pillow==7.2.0
 pipenv==2018.11.26
 prometheus-client==0.8.0
 prompt-toolkit==2.0.10
@@ -86,6 +88,7 @@ ptyprocess==0.6.0
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
 pycparser==2.20
+pycryptodome==3.9.8
 PyDispatcher==2.0.5
 Pygments==2.6.1
 PyHamcrest==2.0.2
