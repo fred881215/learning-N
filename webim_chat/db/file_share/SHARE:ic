@@ -1,0 +1,8 @@
+auto lo wlp3s0
+
+iface wlp3s0 inet dhcp
+ 
+ 
+ 
+dns-nameserver 8.8.8.8
+
