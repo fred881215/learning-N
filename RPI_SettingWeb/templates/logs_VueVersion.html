@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
+    <link rel="icon" href="/static/img/opendds.png">
+
+    <title>Dashboard Template for Bootstrap</title>
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+    <link href="/static/css/logs.css" rel="stylesheet">
+    <script src="/static/js/ie-emulation-modes-warning.js"></script>
+</head>
+<body>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="navbar-header" id="reboot">
+            <a class="navbar-brand" href="/">DDS</a>
+            <button class="power-btn"  v-on:click="click_reboot"><img src="/static/img/power.png" class="power-img"></button>
+        </div>
+    </nav>
+    <script>
+        new Vue({
+            el:'#reboot',
+            methods:{
+                click_reboot: function(){
+                    if (window.confirm('確定要關機嗎？')) {
+                        axios.post('/reboot', {status:'reboot'})
+                        .then(function (response) {
+                            console.log(response);
+                            window.location.reload(true);
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                            window.location.reload(true);
+                        });
+                    }
+                }
+            }
+        }); 
+    </script>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-2 col-md-2 col-sm-3 col-xs-4 sidebar">
+                <ul class="nav nav-sidebar">
+                    <li class="active">
+                        <a href="/">系統設定
+                            <span class="sr-only">(current)</span>
+                        </a>
+                    </li>
+                    <li><a href="ipSettingMain">IP 設定(內建網卡）</a></li>
+                    <li><a href="ipSettingSecond">IP 設定(外接網卡）</a></li>
+                    <li><a href="iniCreate">ini 建立</a></li>
+                    <li><a href="iniUpdate">ini 列表及上傳</a></li>
+                    <li><a href="ping">網路診斷</a></li>
+                    <li><a href="logs">流量統計紀錄分析</a></li>
+                    <li><a href="sendTest">傳輸測試</a></li>
+                    <li><a href="rpiSetting">設定</a></li>
+                </ul>
+            </div>
+            <div id="main" class="col-lg-10 col-lg-offset-2 col-md-10 col-md-offset-2 col-sm-9 col-sm-offset-3 col-xs-8 col-xs-offset-4 main">
+                <h1 class="page-header">流量統計紀錄分析</h1>
+                <p class="inline">自動更新時間({{status}})：</p>
+                <select class="inline" id="update" name="update">
+                    <option value="short">30秒</option>
+                    <option value="medium">1分鐘</option>
+                    <option value="long">5分鐘</option>
+                </select>
+                <button id="send" v-on:click="send">送出</button>
+                <h3 class="chart-title">發送統計</h3>
+                <div class="row">
+                    <!-- <div class="chart-sty" id="chart1"></div> -->
+                    <canvas class="chart-sty" id="chart_send"></canvas>
+                    <div>
+                        <p class="flotLabel">X軸:時間&nbsp&nbsp&nbspY軸:傳輸量(字元)</p>
+                    </div>
+                </div>
+                <br>
+                <h3 class="chart-title">接收統計</h3>
+                <div class="row">
+                    <!-- <div class="chart-sty" id="chart2"></div> -->
+                    <canvas class="chart-sty" id="chart_catch"></canvas>
+                    <div>
+                        <p class="flotLabel">X軸:時間&nbsp&nbsp&nbspY軸:傳輸量(字元)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        // 設定Updatetime, datacount
+        let updateTimeSetting = 30000;
+        let Increase_data = [];
+        let datacount = 0;
+        let pubLogs_loop = [];
+        let subLogs_loop = [];
+        var app = new Vue({
+            el:'#main',
+            methods: {
+                send: function() {
+                    update_value = document.getElementById("update").value;
+                    if (update_value == 'short') {
+                        updateTimeSetting = 30000;
+                    } else if (update_value == 'medium') {
+                        updateTimeSetting = 60000;
+                    } else if (update_value == 'long') {
+                        updateTimeSetting = 300000;
+                    }
+                    data = {"updateTime": updateTimeSetting}
+                    axios.post('/logsUpdateSetting', data)
+                    .then(function (data) {
+                        console.log('success');
+                        window.location.reload();
+                    })
+                    .catch(function (error) {
+                        console.log('error');
+                        return false;
+                    });
+                }
+            },
+        });
+        // chart繪圖
+        let updateTime = JSON.parse('{{ updateTime }}');
+        var ctx_send = document.getElementById('chart_send').getContext('2d');
+        var ctx_catch = document.getElementById('chart_catch').getContext('2d');
+        var chart_1 = new Chart(ctx_send, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'SendData',
+                    data: [],
+                    backgroundColor: [
+                        'rgba(99, 255, 132, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(132,99,255,1)'
+                    ],
+                    borderWidth: 1
+                }]
+            }
+        });
+        var chart_2 = new Chart(ctx_catch, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'CatchData',
+                    data: [],
+                    backgroundColor: [
+                        'rgba(99, 255, 132, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255,132,99,1)'
+                    ],
+                    borderWidth: 1
+                }]
+            }
+        });
+        setInterval(function () {
+            data = {"status":"logsData"};
+            Increase_data.push(datacount);
+            console.log(Increase_data);
+            axios.post('/logsData', data)
+            .then(function (data) {
+                console.log('success');
+                pubLogs_data = data.data.pubLogs;
+                subLogs_data = data.data.subLogs;
+                pubLogs_loop.push(pubLogs_data);
+                subLogs_loop.push(subLogs_data);
+                var chart_1 = new Chart(ctx_send, {
+                    type: 'line',
+                    data: {
+                        labels: pubLogs_loop,
+                        datasets: [{
+                            label: 'SendData',
+                            data: Increase_data,
+                            backgroundColor: [
+                                'rgba(99, 255, 132, 0.2)'
+                            ],
+                            borderColor: [
+                                'rgba(132,99,255,1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    }
+                });
+                var chart_2 = new Chart(ctx_catch, {
+                    type: 'line',
+                    data: {
+                        labels: subLogs_loop,
+                        datasets: [{
+                            label: 'CatchData',
+                            data: Increase_data,
+                            backgroundColor: [
+                                'rgba(99, 255, 132, 0.2)'
+                            ],
+                            borderColor: [
+                                'rgba(255,132,99,1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    }
+                });
+                console.log('update');
+                datacount += 1;
+            })
+            .catch(function (error) {
+                console.log('error');
+                return false;
+            });
+            console.log(updateTime);
+        }, updateTime);
+    </script>
+    <script src="/static/js/bootstrap.min.js"></script>
+    <script src="/static/js/holder.min.js"></script>
+    <script src="/static/js/ie10-viewport-bug-workaround.js"></script>
+    <script src="/static/js/excanvas.min.js"></script>
+</body>
+</html>
