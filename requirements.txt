@@ -90,7 +90,7 @@ pyasn1-modules==0.2.8
 pycparser==2.20
 pycryptodome==3.9.8
 PyDispatcher==2.0.5
-Pygments==2.6.1
+Pygments==2.7.4
 PyHamcrest==2.0.2
 pymodbus==2.3.0
 pyModbusTCP==0.1.8
